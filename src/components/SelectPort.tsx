@@ -6,6 +6,15 @@ import {
 } from "@headlessui/react";
 import { useState, useEffect } from "react";
 
+declare global {
+  interface Window {
+    electronAPI: {
+      handlePortList: (callback: (event: any, portList: any[]) => void) => void;
+      selectPort: (portId: string) => void;
+    };
+  }
+}
+
 export function SelectPort({ open, close }) {
   const [portList, setPortList] = useState([]);
 
