@@ -11,7 +11,7 @@
     "build:electron": "electron-builder --windows zip --x64 && electron-builder --linux AppImage --x64 && electron-builder --mac dmg --x64 && electron-builder  --mac dmg --arm64",
     "build": "npm run build:gui && npm run build:electron"
   },
-  "license": "ISC",
+  "license": "MIT",
   "build": {
     "appId": "be.fri3d.badgefixer",
     "productName": "Fri3d Badge Fixer",
@@ -26,6 +26,7 @@
       "build-gui/**/*",
       "build-resources/**/*"
     ],
+    "artifactName": "fri3d-badge-fixer-${os}-${arch}-${version}.${ext}",
     "win": {
       "target": [
         "zip"
