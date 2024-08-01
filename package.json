@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"electron electron/main.cjs\"",
     "build:gui": "vite build",
-    "build:electron": "electron-builder build",
+    "build:electron": "electron-builder --windows zip --x64 && electron-builder --linux AppImage --x64 && electron-builder --mac dmg --x64 && electron-builder  --mac dmg --arm64",
     "build": "npm run build:gui && npm run build:electron"
   },
   "license": "ISC",
@@ -26,24 +26,16 @@
       "build-gui/**/*",
       "build-resources/**/*"
     ],
-    "artifactName": "${productName} ${arch}.${ext}",
-    "mac": {
-      "hardenedRuntime": false,
-      "target": [
-        {
-          "target": "dmg",
-          "arch": "x64"
-        },
-        {
-          "target": "dmg",
-          "arch": "arm64"
-        }
-      ],
-      "category": "public.app-category.developer-tools",
-      "notarize": false
-    },
     "win": {
-      "target": "nsis"
+      "target": [
+        "zip"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development"
     }
   },
   "devDependencies": {
