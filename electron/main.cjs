@@ -1,10 +1,12 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
-// const serve = require("electron-serve");
+const serve = require("electron-serve");
+const flasher = require("./flasher.cjs");
 
-// console.log(serve);
-// const loadURL = serve({ directory: "../build-gui" });
+const loadURL = serve({ directory: "../build-gui" });
+
+flasher.initialise();
 
 async function createWindow() {
   // Create the browser window.
@@ -21,54 +23,25 @@ async function createWindow() {
     mainWindow.webContents.send(channel, ...args);
   }
 
-  mainWindow.webContents.session.on(
-    "select-serial-port",
-    (event, portList, webContents, callback) => {
-      // Add listeners to handle ports being added or removed before the callback for `select-serial-port`
-      // is called.
+  ipcMain.handle("listPorts", async (_, chipType) => {
+    console.log("listPorts", chipType);
+    const ports = await flasher.getPorts(chipType);
+    sendMessage("portList", ports);
+  });
 
-      sendMessage("portList", portList);
-      mainWindow.webContents.session.on("serial-port-added", (event, port) => {
-        console.log("serial-port-added FIRED WITH", port);
-        // Optionally update portList to add the new port
-      });
+  ipcMain.handle("flash", async (_, chipType, port, file) => {
+    await flasher.flash(chipType, port, file);
+    sendMessage("flashComplete");
+  });
 
-      mainWindow.webContents.session.on(
-        "serial-port-removed",
-        (event, port) => {
-          console.log("serial-port-removed FIRED WITH", port);
-          // Optionally update portList to remove the port
-        }
-      );
-
-      event.preventDefault();
-      ipcMain.once("selectPort", (event, portId) => {
-        callback(portId);
-      });
-      // give
-      // if (portList && portList.length > 0) {
-      //   console.log("portList", portList);
-      //   callback(portList[0].portId);
-      // } else {
-      //   // eslint-disable-next-line n/no-callback-literal
-      //   callback(""); // Could not find any matching devices
-      // }
-    }
-  );
-
-  // and load the index.html of the app.
-  // mainWindow.loadFile("index.html");
   if (app.isPackaged) {
-    // await loadURL(mainWindow);
+    await loadURL(mainWindow);
   } else {
     await mainWindow.loadURL("http://localhost:7812");
     mainWindow.webContents.openDevTools({
       mode: "detach",
     });
   }
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
@@ -90,6 +63,3 @@ app.whenReady().then(() => {
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin") app.quit();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

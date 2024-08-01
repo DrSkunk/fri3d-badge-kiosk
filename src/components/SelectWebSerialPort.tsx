@@ -5,20 +5,29 @@ import {
   DialogBackdrop,
 } from "@headlessui/react";
 import { useState, useEffect } from "react";
-import { listPorts } from "../lib/ListPorts";
 
-export function SelectPort({ open, close, setPort }) {
+declare global {
+  interface Window {
+    electronAPI: {
+      handlePortList: (callback: (event: any, portList: any[]) => void) => void;
+      selectPort: (portId: string) => void;
+    };
+  }
+}
+
+export function SelectWebSerialPort({ open, close }) {
   const [portList, setPortList] = useState([]);
-  // const [port, setPort] = useState(null);
 
   useEffect(() => {
-    listPorts("serial").then((ports) => {
-      setPortList(ports);
+    window.electronAPI.handlePortList((_, newPortList) => {
+      console.log("received", newPortList);
+      setPortList(newPortList);
     });
   }, []);
 
-  async function connect() {
-    const ports = await listPorts("serial");
+  function setPort(portId: string) {
+    window.electronAPI.selectPort(portId);
+    close();
   }
 
   return (
@@ -32,14 +41,13 @@ export function SelectPort({ open, close, setPort }) {
             {portList.map((port) => (
               <button
                 className="border px-4 py-2 hover:bg-gray-200"
-                key={port}
-                onClick={() => setPort(port)}
+                key={port.portId}
+                onClick={() => setPort(port.portId)}
               >
-                {port}
+                {port.portName}
               </button>
             ))}
           </div>
-          <button onClick={connect}>Connect</button>
           <div className="flex gap-4">
             <button onClick={close}>Cancel</button>
           </div>

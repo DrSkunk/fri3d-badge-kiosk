@@ -10,26 +10,46 @@ enum Step {
   DONE,
 }
 
+enum FlashType {
+  ESP,
+  AVR,
+  LANA,
+}
+
 const boards = [
   {
     name: "Badge 2022",
     key: "badge_2022",
     image: "badge_2022.webp",
+    flashType: FlashType.ESP,
   },
   {
     name: "Blaster 2022",
     key: "blaster_2022",
     image: "blaster_2022.webp",
+    flashType: FlashType.AVR,
   },
   {
     name: "Badge 2024",
     key: "badge_2024",
     image: "badge_2024.webp",
+    FlashType: FlashType.ESP,
+    firmwares: {
+      retroGo: {
+        name: "RetroGo",
+        link: "retrogo.zip",
+      },
+      microPython: {
+        name: "MicroPython",
+        image: "micropython.webp",
+      },
+    },
   },
   {
     name: "Blaster 2024",
     key: "blaster_2024",
     image: "blaster_2024.webp",
+    flashType: FlashType.LANA,
   },
 ];
 
@@ -67,25 +87,23 @@ function ChooseBadge({ setBadge }) {
 function ConnectBoard({ board, setPort, nextStep }) {
   const [showSelectPortDialog, setShowSelectPortDialog] = useState(false);
 
-  async function selectPort() {
-    setShowSelectPortDialog(true);
-    const port = await navigator.serial.requestPort();
-    setPort(port);
-    nextStep();
-  }
   return (
     <div>
       <p>Attach {board.name} to the computer and click "Connect"</p>
       <p>Then choose ""</p>
       <Button
         className="border px-4 py-2 rounded hover:bg-slate-200"
-        onClick={selectPort}
+        onClick={() => setShowSelectPortDialog(true)}
       >
         Connect
       </Button>
       <SelectPort
         open={showSelectPortDialog}
-        close={() => setShowSelectPortDialog(false)}
+        setPort={setPort}
+        close={() => {
+          setShowSelectPortDialog(false);
+          nextStep();
+        }}
       />
     </div>
   );

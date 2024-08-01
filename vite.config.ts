@@ -7,4 +7,7 @@ export default defineConfig({
   server: {
     port: 7812,
   },
+  build: {
+    outDir: "build-gui",
+  },
 });
