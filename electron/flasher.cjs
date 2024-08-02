@@ -76,7 +76,8 @@ async function getPorts(portType) {
       if (platform === "win32") {
         // use Powershell to list ports
         const { stdout } = await execPromise(
-          "powershell.exe Get-WmiObject Win32_SerialPort | Select-Object DeviceID"
+          "Get-WmiObject Win32_SerialPort | Select-Object DeviceID",
+          { shell: "powershell.exe" }
         );
         const devices = stdout // remove the header
           .split("\n")
