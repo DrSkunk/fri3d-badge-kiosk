@@ -6,8 +6,6 @@ const flasher = require("./flasher.cjs");
 
 const loadURL = serve({ directory: "../build-gui" });
 
-flasher.initialise();
-
 async function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -41,6 +39,11 @@ async function createWindow() {
     mainWindow.webContents.openDevTools({
       mode: "detach",
     });
+  }
+  try {
+    await flasher.initialise();
+  } catch (error) {
+    sendMessage("error", error.message);
   }
 }
 

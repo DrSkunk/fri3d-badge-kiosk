@@ -48,15 +48,20 @@ async function initialise() {
       continue;
     }
     // Otherwise check if it's available in the PATH
-    if (await commandExists(executable)) {
+    try {
+      await commandExists(executable);
       flashers[name].executable = executable;
       continue;
+    } catch (error) {
+      missingFlashers.push(name);
     }
-    missingFlashers.push(name);
   }
+
   if (missingFlashers.length > 0) {
     throw new Error(
-      `Missing flashers: ${missingFlashers}. Please make them available in PATH or add them to the "flashers: directory.`
+      `Missing flashers: ${missingFlashers.join(
+        ", "
+      )}. Please make them available in PATH or add them to the "flashers" directory.`
     );
   }
 }

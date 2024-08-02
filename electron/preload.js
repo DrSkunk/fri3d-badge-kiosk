@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // from electron to frontend
   handlePortList: (callback) => ipcRenderer.on("portList", callback),
   handleFlashComplete: (callback) => ipcRenderer.on("flashComplete", callback),
+  handleError: (callback) => ipcRenderer.on("error", callback),
 });

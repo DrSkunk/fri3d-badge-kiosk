@@ -1,6 +1,7 @@
 import { Button } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { SelectPort } from "./components/SelectPort";
+import { ErrorOverlay } from "./components/ErrorOverlay";
 
 enum Step {
   CHOOSE_BOARD,
@@ -131,6 +132,7 @@ export function App() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
+      <ErrorOverlay />
       {step === Step.CHOOSE_BOARD && <ChooseBadge setBadge={setBoard} />}
       {step === Step.CONNECT_BOARD && (
         <ConnectBoard
