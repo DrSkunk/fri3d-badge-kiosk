@@ -12,6 +12,13 @@
       },
       "args": ["."],
       "outputCapture": "std"
+    },
+    {
+      "name": "Debug GUI",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:7812",
+      "webRoot": "${workspaceFolder}/app"
     }
   ]
 }
