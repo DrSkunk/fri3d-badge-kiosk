@@ -1,10 +1,29 @@
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
-const { exec } = require("child_process");
+const { exec, spawn } = require("child_process");
 const { platform } = require("process");
 const commandExists = require("command-exists");
+const EventEmitter = require("node:events");
 // const { SerialPort } = require("serialport");
+
+async function spawnEmitter(command, options, stdout, stderr) {
+  return new Promise((resolve, reject) => {
+    const completeCommand = `${command} ${options.join(" ")}`;
+    stdout.emit("data", `Running command: ${completeCommand}\n`);
+
+    const child = spawn(command, options, { shell: true });
+    child.stdout.on("data", (data) => {
+      stdout.emit("data", data.toString());
+    });
+    child.stderr.on("data", (data) => {
+      stderr.emit("data", data.toString());
+    });
+    child.on("close", (code) => {
+      resolve(code);
+    });
+  });
+}
 
 const execPromise = promisify(exec);
 
@@ -23,19 +42,40 @@ const flashers = {
   [ChipType.AVRDUDE]: {
     portType: PortType.SERIAL,
     executable: "avrdude",
-    flashOptions: "",
+    flashOptions: [
+      "-c",
+      "avrispmkII",
+      "-p",
+      "m328p",
+      "-P",
+      "usb",
+      "-U",
+      "flash:r:{{IMAGE}}:r",
+      "-vv",
+    ],
   },
   [ChipType.ESPTOOL]: {
     portType: PortType.SERIAL,
     executable: "esptool.py",
-    flashOptions: "",
+    flashOptions: [
+      "-p",
+      "{{PORT}}",
+      "write_flash",
+      "--flash_size",
+      "detect",
+      "0x0",
+      "{{IMAGE}}",
+    ],
   },
   [ChipType.WCHISP]: {
     portType: PortType.WCHISP,
     executable: "wchisp",
-    flashOptions: "",
+    flashOptions: ["flash", "{{IMAGE}}"],
   },
 };
+
+const stdoutEvents = new EventEmitter();
+const stderrEvents = new EventEmitter();
 
 async function initialise() {
   let missingFlashers = [];
@@ -45,6 +85,7 @@ async function initialise() {
     // First check if the executable is available in the flashers directory
     const executablePath = path.resolve("flashers", executable);
     if (fs.existsSync(executablePath)) {
+      flashers[name].executable = executablePath;
       continue;
     }
     // Otherwise check if it's available in the PATH
@@ -123,16 +164,24 @@ async function getPorts(portType) {
   }
 }
 
-async function flash(chipType, image, port) {
+async function flash(chipType, port, image) {
   // Re-evalute with esptool which has multiple files
-  const flashString = flashers[chipType].flashOptions
-    .replace("{{IMAGE}}", image)
-    .replace("{{PORT}}", port);
-  return execute(chipType, flashString);
+  const flashOptions = flashers[chipType].flashOptions.map((option) => {
+    return option.replace("{{IMAGE}}", image).replace("{{PORT}}", port);
+  });
+
+  return spawnEmitter(
+    flashers[chipType].executable,
+    flashOptions,
+    stdoutEvents,
+    stderrEvents
+  );
 }
 
 module.exports = {
   initialise,
   getPorts,
   flash,
+  stdout: stdoutEvents,
+  stderr: stderrEvents,
 };

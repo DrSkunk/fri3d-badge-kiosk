@@ -11,6 +11,7 @@ async function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    fullscreen: app.isPackaged,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -30,6 +31,17 @@ async function createWindow() {
   ipcMain.handle("flash", async (_, chipType, port, file) => {
     await flasher.flash(chipType, port, file);
     sendMessage("flashComplete");
+  });
+
+  flasher.stdout.on("data", (data) => {
+    console.log("stdout", data);
+
+    sendMessage("stdout", data);
+  });
+
+  flasher.stderr.on("data", (data) => {
+    console.log("stderr", data);
+    sendMessage("test", data);
   });
 
   if (app.isPackaged) {

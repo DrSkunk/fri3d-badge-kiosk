@@ -12,9 +12,9 @@ enum Step {
 }
 
 enum FlashType {
-  ESP,
-  AVR,
-  LANA,
+  ESP = "esptool",
+  AVR = "avrdude",
+  LANA = "wchisp",
 }
 
 const boards = [
@@ -34,17 +34,7 @@ const boards = [
     name: "Badge 2024",
     key: "badge_2024",
     image: "badge_2024.webp",
-    FlashType: FlashType.ESP,
-    firmwares: {
-      retroGo: {
-        name: "RetroGo",
-        link: "retrogo.zip",
-      },
-      microPython: {
-        name: "MicroPython",
-        image: "micropython.webp",
-      },
-    },
+    flashType: FlashType.ESP,
   },
   {
     name: "Blaster 2024",
@@ -77,7 +67,7 @@ function ChooseBadge({ setBadge }) {
             key={board.key}
             src={board.image}
             alt={board.name}
-            onClick={() => setBadge(board.key)}
+            onClick={() => setBadge(board)}
           />
         ))}
       </div>
@@ -110,8 +100,42 @@ function ConnectBoard({ board, setPort, nextStep }) {
   );
 }
 
-function ChooseFirmware({ board, setFirmware }) {
-  return <div> firmware</div>;
+function Flash({ board, port, nextStep }) {
+  const [logs, setLogs] = useState("Ready!\n");
+
+  useEffect(() => {
+    window.electronAPI.handleFlashComplete(() => {
+      // nextStep();
+    });
+    window.electronAPI.handleStdout((_, data: string) => {
+      setLogs((logs) => data + logs);
+    });
+    window.electronAPI.handleStderr((_, data: string) => {
+      setLogs((logs) => data + logs);
+    });
+  }, []);
+
+  function startFlash() {
+    window.electronAPI.flash(board.flashType, port, "test");
+    console.log("Start flashing");
+  }
+
+  return (
+    <div className="flex flex-col">
+      firmware <Button onClick={startFlash}>startFlash</Button>
+      <textarea readOnly className="border w-96 h-72" value={logs} />
+    </div>
+  );
+}
+
+function Done({ nextStep }: { nextStep: () => void }) {
+  return (
+    <div>
+      <h1>Klaar!</h1>
+      <div>Je kan nu weer verder.</div>
+      <Button onClick={nextStep}>Terug naar het begin</Button>
+    </div>
+  );
 }
 
 export function App() {
@@ -119,6 +143,15 @@ export function App() {
   const [board, setBoard] = useState(null);
   const [port, setPort] = useState(null);
   const [firmware, setFirmware] = useState(null);
+
+  useEffect(() => {
+    window.electronAPI.handleStdout((_, data: string) => {
+      console.log("stdout", data);
+    });
+    window.electronAPI.handleStderr((_, data: string) => {
+      console.error("stderr", data);
+    });
+  }, []);
 
   useEffect(() => {
     if (board) {
@@ -144,8 +177,32 @@ export function App() {
         />
       )}
       {step == Step.CHOOSE_FIRMWARE && (
-        <ChooseFirmware board={board} setFirmware={setFirmware} />
+        <Flash
+          board={board}
+          port={port}
+          nextStep={() => {
+            setStep(Step.DONE);
+          }}
+        />
       )}
+      {step === Step.DONE && (
+        <Done
+          nextStep={() => {
+            setStep(Step.CHOOSE_BOARD);
+          }}
+        />
+      )}
+      {/* <pre className="static left-0 bottom-0">
+        {JSON.stringify(
+          {
+            step,
+            board,
+            firmware,
+          },
+          null,
+          2
+        )}
+      </pre> */}
     </div>
   );
 }
