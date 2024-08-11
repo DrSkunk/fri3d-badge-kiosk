@@ -2,3 +2,5 @@ wchisp
 wchisp.exe
 avrdude
 avrdude.exe
+avrdude.conf
+esptool.exe
