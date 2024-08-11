@@ -1,3 +1,4 @@
+const { app } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
@@ -5,7 +6,6 @@ const { exec, spawn } = require("child_process");
 const { platform } = require("process");
 const commandExists = require("command-exists");
 const EventEmitter = require("node:events");
-const boardsManifest = require("../public/boards/index.json");
 
 async function spawnEmitter(command, options, stdout, stderr) {
   return new Promise((resolve, reject) => {
@@ -124,6 +124,11 @@ async function initialise() {
 
   // check if all firmware files are available
   const firmwareDir = path.resolve("firmware");
+  // const boardsManifest = await (await fetch("/boards/index.json")).json();
+  const boardsManifest = app.isPackaged
+    ? require("./build-gui/boards/index.json")
+    : require("../public/boards/index.json");
+
   let missingFirmware = [];
   for (const board of boardsManifest) {
     const { name, firmware } = board;

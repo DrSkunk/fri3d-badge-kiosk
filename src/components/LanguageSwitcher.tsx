@@ -1,26 +1,16 @@
 import { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
-import { Language } from "../enum/Language";
+import { Button } from "./Button";
+import { Translate } from "./Translate";
 
 export function LanguageSwitcher() {
-  const { currentLanguage, setLanguage } = useContext(LanguageContext);
+  const { switchLanguage } = useContext(LanguageContext);
 
   return (
-    <div>
-      <button
-        onClick={() => setLanguage(Language.NL)}
-        className="text-white"
-        disabled={currentLanguage === Language.NL}
-      >
-        Nederlands
-      </button>
-      <button
-        onClick={() => setLanguage(Language.EN)}
-        className="text-white"
-        disabled={currentLanguage === Language.EN}
-      >
-        English
-      </button>
+    <div className="absolute right-2 bottom-2 flex gap-4">
+      <Button onClick={switchLanguage} className="text-white text-lg px-4 py-2">
+        <Translate item="changeToLanguage" />
+      </Button>
     </div>
   );
 }
