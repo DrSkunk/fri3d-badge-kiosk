@@ -5,6 +5,7 @@ const { exec, spawn } = require("child_process");
 const { platform } = require("process");
 const commandExists = require("command-exists");
 const EventEmitter = require("node:events");
+const boardsManifest = require("../public/boards/index.json");
 
 async function spawnEmitter(command, options, stdout, stderr) {
   return new Promise((resolve, reject) => {
@@ -115,15 +116,30 @@ async function initialise() {
       )}. Please make them available in PATH or add them to the "flashers" directory.`
     );
   }
+
+  // check if all firmware files are available
+  const firmwareDir = path.resolve("firmware");
+  let missingFirmware = [];
+  for (const board of boardsManifest) {
+    const { name, firmware } = board;
+    const firmwarePath = path.resolve(firmwareDir, firmware);
+    if (!fs.existsSync(firmwarePath)) {
+      missingFirmware.push(`${name}, file "${firmware}"`);
+    }
+  }
+
+  if (missingFirmware.length > 0) {
+    throw new Error(
+      `Missing firmware for: ${missingFirmware.join(
+        ", "
+      )}. Please put these inside the "firmware" directory.`
+    );
+  }
 }
 
 async function flash() {
   const { chipType, firmware } = selectedBoard;
-  const firmwarePath = path.resolve("public", firmware);
-  if (!fs.existsSync(firmwarePath)) {
-    stderrEvents.emit("data", `Firmware file not found: ${firmwarePath}\n`);
-    throw new Error(`Firmware file not found: ${firmwarePath}`);
-  }
+  const firmwarePath = path.resolve("firmware", firmware);
   const flashOptions = flashers[chipType].flashOptions.map((option) => {
     return option.replace("{{FIRMWARE}}", firmwarePath);
   });
