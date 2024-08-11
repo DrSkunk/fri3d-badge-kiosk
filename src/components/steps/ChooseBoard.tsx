@@ -12,7 +12,7 @@ export function ChooseBoard() {
   }
   return (
     <>
-      <h1 className="text-3xl">Kies wat je wil fixen</h1>
+      <h1 className="text-4xl">Raak aan wat je wilt fixen</h1>
       <div className="grid grid-cols-4 gap-4 m-4">
         {boards.map((board) => (
           <div

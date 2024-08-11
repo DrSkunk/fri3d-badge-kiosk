@@ -1,5 +1,7 @@
-# Instructions
+# Badge 2022
 
-Instructions for badge 2022
+- Sluit de badge aan op de USB-C kabel die voor de computer ligt.
+- Zorg er voor dat de onderste schakelaar op **ON** staat, zoals op de foto
+- Je bent klaar om te flashen! Druk hieronder op de knop **Flashen**
 
-![Badge Logo](/boards/badge_2022/images/step1.webp)
+![Connection](/boards/badge_2022/connection.webp)

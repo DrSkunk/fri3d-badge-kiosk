@@ -11,7 +11,7 @@ export function Button({
 }) {
   return (
     <HUButton
-      className={`border px-4 py-2 rounded text-white bg-slate-800 hover:bg-slate-600 ${className}`}
+      className={`border px-6 py-4 rounded text-white text-2xl bg-slate-800 hover:bg-slate-600 ${className}`}
       {...props}
     >
       {children}

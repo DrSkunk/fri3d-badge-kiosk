@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "../Button";
 import { StepContext } from "../../context/StepContext";
 
@@ -6,11 +6,11 @@ export function Flash() {
   const [logs, setLogs] = useState("");
   const { nextStep, previousStep } = useContext(StepContext);
   const [flashing, setFlashing] = useState(true);
-
   const [showFlashAgain, setShowFlashAgain] = useState(false);
 
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
-    console.log("running useEffect");
     const removeHandleFlashCompleteListener =
       window.electronAPI.handleFlashComplete(() => {
         setFlashing(false);
@@ -18,20 +18,20 @@ export function Flash() {
       });
     const removeHandleFlashErrorListener = window.electronAPI.handleFlashError(
       () => {
-        console.error("Flash error handling");
         setShowFlashAgain(true);
-        console.log("Flash error", flashing);
         setFlashing(false);
       }
     );
     const removeHandleStdoutListener = window.electronAPI.handleStdout(
       (_, data: string) => {
         setLogs((logs) => logs + data);
+        scrollToBottom();
       }
     );
     const removeHandleStderrListener = window.electronAPI.handleStderr(
       (_, data: string) => {
         setLogs((logs) => logs + data);
+        scrollToBottom();
       }
     );
 
@@ -51,6 +51,14 @@ export function Flash() {
     setFlashing(true);
     console.log("Start flashing");
     window.electronAPI.flash();
+  }
+
+  function scrollToBottom() {
+    console.log("scroll", textAreaRef);
+    if (!textAreaRef.current) {
+      return;
+    }
+    textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
   }
 
   return (
@@ -73,6 +81,7 @@ export function Flash() {
       )}
 
       <textarea
+        ref={textAreaRef}
         readOnly
         className="border w-[70vw] h-72 bg-black px-4 py-2 text-white rounded resize"
         value={logs}
