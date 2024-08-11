@@ -81,6 +81,11 @@ function selectBoard(board) {
 const stdoutEvents = new EventEmitter();
 const stderrEvents = new EventEmitter();
 
+async function loadJsonFile(filePath) {
+  const data = await fs.promises.readFile(filePath);
+  return JSON.parse(data);
+}
+
 async function initialise() {
   try {
     fs.mkdirSync(path.resolve("firmware"), { recursive: true });
@@ -128,8 +133,8 @@ async function initialise() {
   const firmwareDir = path.resolve("firmware");
   // const boardsManifest = await (await fetch("/boards/index.json")).json();
   const boardsManifest = app.isPackaged
-    ? require("./build-gui/boards/index.json")
-    : require("../public/boards/index.json");
+    ? await loadJsonFile("./resources/build-gui/boards/index.json")
+    : await loadJsonFile("./public/boards/index.json");
 
   let missingFirmware = [];
   for (const board of boardsManifest) {
