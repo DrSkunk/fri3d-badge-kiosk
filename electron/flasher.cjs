@@ -5,7 +5,6 @@ const { exec, spawn } = require("child_process");
 const { platform } = require("process");
 const commandExists = require("command-exists");
 const EventEmitter = require("node:events");
-// const { SerialPort } = require("serialport");
 
 async function spawnEmitter(command, options, stdout, stderr) {
   return new Promise((resolve, reject) => {
@@ -27,10 +26,11 @@ async function spawnEmitter(command, options, stdout, stderr) {
 
 const execPromise = promisify(exec);
 
+// Keep in sync with the boards/index.json file
 const ChipType = {
-  AVRDUDE: "avrdude",
-  ESPTOOL: "esptool",
-  WCHISP: "wchisp",
+  AVR: "AVR",
+  ESP: "ESP",
+  WCHISP: "WCHISP",
 };
 
 const PortType = {
@@ -39,40 +39,43 @@ const PortType = {
 };
 
 const flashers = {
-  [ChipType.AVRDUDE]: {
+  [ChipType.AVR]: {
     portType: PortType.SERIAL,
     executable: "avrdude",
     flashOptions: [
       "-c",
-      "avrispmkII",
+      "usbtiny",
       "-p",
       "m328p",
-      "-P",
-      "usb",
       "-U",
-      "flash:r:{{IMAGE}}:r",
+      "flash:w:{{FIRMWARE}}:r",
       "-vv",
     ],
   },
-  [ChipType.ESPTOOL]: {
+  [ChipType.ESP]: {
     portType: PortType.SERIAL,
-    executable: "esptool.py",
+    executable: "esptool",
     flashOptions: [
-      "-p",
-      "{{PORT}}",
       "write_flash",
       "--flash_size",
       "detect",
       "0x0",
-      "{{IMAGE}}",
+      "{{FIRMWARE}}",
     ],
   },
   [ChipType.WCHISP]: {
     portType: PortType.WCHISP,
     executable: "wchisp",
-    flashOptions: ["flash", "{{IMAGE}}"],
+    flashOptions: ["flash", "{{FIRMWARE}}"],
   },
 };
+
+let selectedBoard = null;
+
+function selectBoard(board) {
+  console.log("Selected board", board.name);
+  selectedBoard = board;
+}
 
 const stdoutEvents = new EventEmitter();
 const stderrEvents = new EventEmitter();
@@ -83,7 +86,14 @@ async function initialise() {
     const [name, { executable }] = flasher;
 
     // First check if the executable is available in the flashers directory
-    const executablePath = path.resolve("flashers", executable);
+    let executablePath = path.resolve("flashers", executable);
+    if (platform === "win32") {
+      executablePath += ".exe";
+      // not on windows, then esptool probably is "esptool.py"
+    } else if (name === ChipType.ESPTOOL) {
+      executablePath += ".py";
+    }
+    console.log("Checking", executablePath);
     if (fs.existsSync(executablePath)) {
       flashers[name].executable = executablePath;
       continue;
@@ -107,81 +117,35 @@ async function initialise() {
   }
 }
 
-async function execute(chipType, args) {
-  let command = `${flashers[chipType].executable}`;
-  if (args) {
-    command += ` ${args}`;
+async function flash() {
+  const { chipType, firmware } = selectedBoard;
+  const firmwarePath = path.resolve("public", firmware);
+  if (!fs.existsSync(firmwarePath)) {
+    stderrEvents.emit("data", `Firmware file not found: ${firmwarePath}\n`);
+    throw new Error(`Firmware file not found: ${firmwarePath}`);
   }
-  return execPromise(command);
-}
-
-async function getPorts(portType) {
-  console.log("getPorts", portType, PortType.SERIAL);
-  switch (portType) {
-    case PortType.SERIAL:
-      if (platform === "win32") {
-        // use Powershell to list ports
-        const { stdout } = await execPromise(
-          "Get-WmiObject Win32_SerialPort | Select-Object DeviceID",
-          { shell: "powershell.exe" }
-        );
-        const devices = stdout // remove the header
-          .split("\n")
-          .slice(1)
-          .map((line) => line.trim())
-          .filter((line) => line);
-        return devices;
-        // Probably MacOS or Linux
-      } else {
-        // use  ls /dev/{tty,cu}.* to list ports
-        const lsCommand =
-          platform === "darwin" ? "ls /dev/{tty,cu}.*" : "ls /dev/tty*";
-        const { stdout } = await execPromise(lsCommand);
-        console.log("stdout", stdout);
-        const devices = stdout.split("\n").reduce((acc, line) => {
-          if (line) {
-            acc.push(line);
-          }
-          return acc;
-        }, []);
-        return devices;
-      }
-    // Or just use serialport, but this is harder to package maybe
-    // return (await SerialPort.list()).map(({ path }) => path);
-    case PortType.WCHISP:
-      const { stdout } = await execute(ChipType.WCHISP, "probe");
-      const lines = stdout.split("\n");
-      const devices = lines.reduce((acc, line) => {
-        const deviceMatch = line.match(/Device #\d+: (\S+)/);
-        if (deviceMatch) {
-          acc.push(deviceMatch[1]);
-        }
-        return acc;
-      }, []);
-      return devices;
-    default:
-      throw new Error(`Unknown port type: ${portType}`);
-  }
-}
-
-async function flash(chipType, port, image) {
-  // Re-evalute with esptool which has multiple files
   const flashOptions = flashers[chipType].flashOptions.map((option) => {
-    return option.replace("{{IMAGE}}", image).replace("{{PORT}}", port);
+    return option.replace("{{FIRMWARE}}", firmwarePath);
   });
 
-  return spawnEmitter(
+  // check if file exists
+
+  const exitCode = await spawnEmitter(
     flashers[chipType].executable,
     flashOptions,
     stdoutEvents,
     stderrEvents
   );
+  if (exitCode !== 0) {
+    throw new Error(`Failed to flash firmware. Exit code: ${exitCode}`);
+  }
+  return exitCode;
 }
 
 module.exports = {
   initialise,
-  getPorts,
   flash,
+  selectBoard,
   stdout: stdoutEvents,
   stderr: stderrEvents,
 };

@@ -1,0 +1,6 @@
+export enum Step {
+  CHOOSE_BOARD,
+  INSTRUCTIONS,
+  FLASH_FIRMWARE,
+  DONE,
+}

@@ -22,26 +22,27 @@ async function createWindow() {
     mainWindow.webContents.send(channel, ...args);
   }
 
-  ipcMain.handle("listPorts", async (_, chipType) => {
-    console.log("listPorts", chipType);
-    const ports = await flasher.getPorts(chipType);
-    sendMessage("portList", ports);
+  ipcMain.handle("selectBoard", async (_, board) => {
+    flasher.selectBoard(board);
   });
 
-  ipcMain.handle("flash", async (_, chipType, port, file) => {
-    await flasher.flash(chipType, port, file);
-    sendMessage("flashComplete");
+  ipcMain.handle("flash", async () => {
+    try {
+      await flasher.flash();
+      sendMessage("flashComplete");
+    } catch (error) {
+      sendMessage("flashError");
+    }
   });
 
   flasher.stdout.on("data", (data) => {
     console.log("stdout", data);
-
     sendMessage("stdout", data);
   });
 
   flasher.stderr.on("data", (data) => {
     console.log("stderr", data);
-    sendMessage("test", data);
+    sendMessage("stderr", data);
   });
 
   if (app.isPackaged) {
