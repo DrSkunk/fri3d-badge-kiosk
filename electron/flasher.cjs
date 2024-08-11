@@ -82,6 +82,11 @@ const stdoutEvents = new EventEmitter();
 const stderrEvents = new EventEmitter();
 
 async function initialise() {
+  try {
+    fs.mkdirSync("firmware", { recursive: true });
+    fs.mkdirSync("flashers", { recursive: true });
+  } catch (error) {}
+
   let missingFlashers = [];
   for (const flasher of Object.entries(flashers)) {
     const [name, { executable }] = flasher;
