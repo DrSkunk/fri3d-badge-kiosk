@@ -4,7 +4,10 @@
     "name": "Badge 2022",
     "chipType": "ESP",
     "image": "boards/badge_2022/icon.webp",
-    "instructions": "boards/badge_2022/instructions.md",
+    "instructions": {
+      "en": "boards/badge_2022/instructions.en.md",
+      "nl": "boards/badge_2022/instructions.nl.md"
+    },
     "firmware": "badge_2022.img"
   },
   {
@@ -12,7 +15,10 @@
     "name": "Blaster",
     "chipType": "AVR",
     "image": "boards/blaster/icon.webp",
-    "instructions": "boards/blaster/instructions.md",
+    "instructions": {
+      "en": "boards/blaster/instructions.en.md",
+      "nl": "boards/blaster/instructions.nl.md"
+    },
     "firmware": "blaster.hex"
   },
   {
@@ -20,7 +26,10 @@
     "name": "Badge 2024",
     "chipType": "ESP",
     "image": "boards/badge_2024/icon.webp",
-    "instructions": "boards/badge_2024/instructions.md",
+    "instructions": {
+      "en": "boards/badge_2024/instructions.en.md",
+      "nl": "boards/badge_2024/instructions.nl.md"
+    },
     "firmware": "badge_2024.img"
   },
   {
@@ -28,7 +37,10 @@
     "name": "Flamingo",
     "chipType": "WCHISP",
     "image": "boards/flamingo/icon.webp",
-    "instructions": "boards/flamingo/instructions.md",
+    "instructions": {
+      "en": "boards/flamingo/instructions.en.md",
+      "nl": "boards/flamingo/instructions.nl.md"
+    },
     "firmware": "flamingo.hex"
   },
   {
@@ -36,7 +48,10 @@
     "name": "Communicator",
     "chipType": "WCHISP",
     "image": "boards/communicator/icon.webp",
-    "instructions": "boards/communicator/instructions.md",
+    "instructions": {
+      "en": "boards/communicator/instructions.en.md",
+      "nl": "boards/communicator/instructions.nl.md"
+    },
     "firmware": "communicator.hex"
   }
 ]

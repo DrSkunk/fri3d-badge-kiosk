@@ -29,8 +29,14 @@ export function BoardContextProvider({
       const boards = (await response.json()) as Board[];
       // get instructions
       for (const board of boards) {
-        const response = await fetch(`/boards/${board.key}/instructions.md`);
-        board.instructions = await response.text();
+        for (const element of Object.entries(board.instructions)) {
+          const [lang, url] = element;
+          if (lang !== "en" && lang !== "nl") {
+            throw new Error(`Unsupported language ${lang}`);
+          }
+          const response = await fetch(url);
+          board.instructions[lang] = await response.text();
+        }
       }
       setBoards(boards);
     }

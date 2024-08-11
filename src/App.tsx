@@ -6,17 +6,21 @@ import { StepContext } from "./context/StepContext";
 import { Instructions } from "./components/steps/Instructions";
 import { Flash } from "./components/steps/Flash";
 import { Done } from "./components/steps/Done";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 export function App() {
   const { currentStep } = useContext(StepContext);
 
   return (
-    <div className="flex flex-col justify-center items-center container mx-auto py-4">
+    <>
       <ErrorOverlay />
-      {currentStep === Step.CHOOSE_BOARD && <ChooseBoard />}
-      {currentStep === Step.INSTRUCTIONS && <Instructions />}
-      {currentStep === Step.FLASH_FIRMWARE && <Flash />}
-      {currentStep === Step.DONE && <Done />}
-    </div>
+      <LanguageSwitcher />
+      <div className="flex flex-col justify-center items-center container mx-auto py-4">
+        {currentStep === Step.CHOOSE_BOARD && <ChooseBoard />}
+        {currentStep === Step.INSTRUCTIONS && <Instructions />}
+        {currentStep === Step.FLASH_FIRMWARE && <Flash />}
+        {currentStep === Step.DONE && <Done />}
+      </div>
+    </>
   );
 }

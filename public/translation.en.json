@@ -1,0 +1,11 @@
+{
+  "closeErrorDialog": "Close",
+  "doneButton": "Back to start",
+  "doneExplanation": "Je bordje zou moeten hersteld zijn. Is dit nog niet het geval kan je het  nog eens proberen of iemand van de vrijwilligers aanspreken voor hulp.",
+  "chooseBoardTitle": "Touch what you want to fix",
+  "flashingFailedButton": "The flashing process seems to have failed. Do you want to try again? Be sure to follow the instructions!",
+  "flashingTryAgainButton": "Try again",
+  "flashingBackButton": "Show instructions again",
+  "chooseOtherBoard": "Choose another board",
+  "flash": "Start flashing"
+}

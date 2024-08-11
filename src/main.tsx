@@ -4,6 +4,7 @@ import "./main.css";
 import { BoardContextProvider } from "./context/BoardContext";
 import { StepContextProvider } from "./context/StepContext";
 import { electronAPI } from "./mockElectronApi.ts";
+import { LanguageContextProvider } from "./context/LanguageContext.tsx";
 
 // In browser, add mock functions to window object that otherwise is filled by preload.js
 if (!navigator.userAgent.includes("Electron")) {
@@ -11,9 +12,11 @@ if (!navigator.userAgent.includes("Electron")) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <BoardContextProvider>
-    <StepContextProvider>
-      <App />
-    </StepContextProvider>
-  </BoardContextProvider>
+  <LanguageContextProvider>
+    <BoardContextProvider>
+      <StepContextProvider>
+        <App />
+      </StepContextProvider>
+    </BoardContextProvider>
+  </LanguageContextProvider>
 );

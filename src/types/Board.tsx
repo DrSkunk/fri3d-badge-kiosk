@@ -3,6 +3,9 @@ export interface Board {
   key: string;
   image: string;
   flashType: string;
-  instructions: string;
+  instructions: {
+    en: string;
+    nl: string;
+  };
   firmware: string;
 }

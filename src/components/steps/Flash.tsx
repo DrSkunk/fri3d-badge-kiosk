@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "../Button";
 import { StepContext } from "../../context/StepContext";
+import { Translate } from "../Translate";
 
 export function Flash() {
   const [logs, setLogs] = useState("");
@@ -66,17 +67,16 @@ export function Flash() {
       {showFlashAgain && (
         <>
           <p className="text-center">
-            Het flashen lijkt gefaald. Wil je opnieuw proberen? Kijk zeker goed
-            de instructies na!
+            <Translate item="flashingFailedButton" />
           </p>
           <Button className="mx-auto block flex-shrink" onClick={startFlash}>
-            Opnieuw proberen
+            <Translate item="flashingTryAgainButton" />
           </Button>
         </>
       )}
       {!flashing && (
         <Button className="mx-auto block" onClick={previousStep}>
-          Instructies terug tonen
+          <Translate item="flashingBackButton" />
         </Button>
       )}
 

@@ -5,6 +5,7 @@ import {
   DialogBackdrop,
 } from "@headlessui/react";
 import { useState, useEffect } from "react";
+import { Translate } from "./Translate";
 
 export function ErrorOverlay() {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,9 @@ export function ErrorOverlay() {
           <DialogTitle className="font-bold">Error</DialogTitle>
           <p>{error}</p>
           <div className="flex gap-4">
-            <button onClick={close}>Close</button>
+            <button onClick={close}>
+              <Translate item="closeErrorDialog" />
+            </button>
           </div>
         </DialogPanel>
       </div>
