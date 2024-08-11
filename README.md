@@ -18,6 +18,8 @@ This is an electron app that uses Vite with React Typescript as a frontend.
 
 Download the latest version for your platform here: https://github.com/DrSkunk/fri3d-badge-kiosk/releases/latest
 
+Next to your downloaded binary, create the `flashers` and `firmware` directories.
+
 Add your platform's respective versions of the flashing tools to the `flashers` directory. Or make them available in your path.
 
 Current flashers are:
