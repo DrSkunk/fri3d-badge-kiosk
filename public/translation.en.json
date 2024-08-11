@@ -8,5 +8,6 @@
   "flashingBackButton": "Show instructions again",
   "chooseOtherBoard": "Choose another board",
   "flash": "Start flashing",
-  "changeToLanguage": "Verander naar het Nederlands"
+  "changeToLanguage": "Verander naar het Nederlands",
+  "flashingInProgress": "Busy with flashing, please wait. Do not disconnect!"
 }

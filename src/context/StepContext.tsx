@@ -3,12 +3,14 @@ import { Step } from "../enum/Step";
 
 interface BoardContextType {
   currentStep: Step;
+  backToHome: () => void;
   previousStep: () => void;
   nextStep: () => void;
 }
 
 export const StepContext = createContext<BoardContextType>({
   currentStep: Step.CHOOSE_BOARD,
+  backToHome: () => {},
   previousStep: () => {},
   nextStep: () => {},
 });
@@ -19,6 +21,10 @@ export function StepContextProvider({
   children: React.ReactNode;
 }) {
   const [currentStep, setCurrentStep] = useState<Step>(Step.CHOOSE_BOARD);
+
+  function backToHome() {
+    setCurrentStep(Step.CHOOSE_BOARD);
+  }
 
   function previousStep() {
     if (currentStep === Step.CHOOSE_BOARD) {
@@ -39,6 +45,7 @@ export function StepContextProvider({
     <StepContext.Provider
       value={{
         currentStep,
+        backToHome,
         previousStep,
         nextStep,
       }}
