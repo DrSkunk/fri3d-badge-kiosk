@@ -1,7 +1,7 @@
-# Flamingo blaster
+# Flamingo Blaster
 
-- Sluit de chip **nog niet** aan op de USB-C kabel.
-- Hou de bovenste knop ingedrukt terwijl je de USB-C kabel insteekt die voor de computer ligt.
-- Je bent klaar om te flashen! Druk hieronder op de knop **Flashen**
+- **Do not** connect the chip to the USB-C cable yet.
+- Hold down the top button while inserting the USB-C cable that is connected to the computer.
+- You're ready to flash! Click the **Start flashing** button below.
 
   ![LANA connector](/boards/images/lana.webp)

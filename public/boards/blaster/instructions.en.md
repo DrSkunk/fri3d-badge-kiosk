@@ -1,13 +1,15 @@
+Here is the translation to English:
+
 # Blaster Fri3d 2022
 
-- Op de tafel voor je ligt de blaster flasher.
+- On the table in front of you lies the blaster flasher.
 
 ![Flasher](/boards/blaster/flasher.webp)
 
-- Zoek op je blaster deze zes gaatjes:
+- Locate these six holes on your blaster:
 
 ![ICSP Headers](/boards/blaster/icsp.webp)
 
-- De bovenkant van de Blaster Flasher is de kant waar **de grijze kabel naar boven gaat** en dus **De rode rand van de kabel aan de rechterkant zit**
-- Hou de pinnetjes op het uiteinde van de Blaster flasher op de zes gaatjes.
-- Je bent klaar om te flashen. Hou de pinnetjes zachtjes ingedrukt **en laat pas los wanneer hij klaar is**.
+- The top of the Blaster Flasher is the side where **the gray cable goes up** and **the red edge of the cable is on the right side**.
+- Hold the pins at the end of the Blaster Flasher on the six holes.
+- You are ready to flash. Gently press the pins **and do not release until it is finished**.

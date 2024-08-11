@@ -1,7 +1,7 @@
 # Badge 2024
 
-- Sluit de badge aan op de USB-C kabel die voor de computer ligt.
-- Zorg er voor dat de onderste schakelaar op **ON** staat, zoals op de foto
-- Je bent klaar om te flashen! Druk hieronder op de knop **Flashen**
+- Connect the badge to the USB-C cable connected to the computer.
+- Make sure the bottom switch is set to **ON**, as shown in the picture.
+- You're ready to flash! Click the **Flash** button below.
 
 ![Connection](/boards/badge_2024/connection.webp)
