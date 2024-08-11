@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"electron electron/main.cjs\"",
     "build:gui": "vite build",
-    "build:electron": "electron-builder --windows portable --x64 && electron-builder --linux AppImage --x64 && electron-builder --mac dmg --x64 && electron-builder  --mac dmg --arm64",
+    "build:electron": "electron-builder --windows zip --x64 && electron-builder --linux AppImage --x64 && electron-builder --mac dmg --x64 && electron-builder  --mac dmg --arm64",
     "build": "npm run build:gui && npm run build:electron"
   },
   "license": "MIT",
@@ -29,7 +29,7 @@
     "artifactName": "fri3d-badge-fixer-${os}-${arch}-${version}.${ext}",
     "win": {
       "target": [
-        "portable"
+        "zip"
       ]
     },
     "linux": {
