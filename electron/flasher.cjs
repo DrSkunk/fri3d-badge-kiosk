@@ -83,9 +83,11 @@ const stderrEvents = new EventEmitter();
 
 async function initialise() {
   try {
-    fs.mkdirSync("firmware", { recursive: true });
-    fs.mkdirSync("flashers", { recursive: true });
-  } catch (error) {}
+    fs.mkdirSync(path.resolve("firmware"), { recursive: true });
+    fs.mkdirSync(path.resolve("flashers"), { recursive: true });
+  } catch (error) {
+    console.error("Error creating directories", error);
+  }
 
   let missingFlashers = [];
   for (const flasher of Object.entries(flashers)) {
