@@ -70,7 +70,7 @@ export function Flash() {
         </p>
       )}
       {flashing && (
-        <p className="text-center">
+        <p className="text-8xl text-center animate-text whitespace-pre">
           <Translate item="flashingInProgress" />
         </p>
       )}
