@@ -49,7 +49,7 @@ const flashers = {
       "-p",
       "m328p",
       "-U",
-      "flash:w:{{FIRMWARE}}:r",
+      "flash:w:{{FIRMWARE}}:i",
       "-vv",
     ],
   },
