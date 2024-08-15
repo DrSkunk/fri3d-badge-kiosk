@@ -9,5 +9,5 @@
   "chooseOtherBoard": "Choose another board",
   "flash": "Start flashing",
   "changeToLanguage": "Verander naar het Nederlands",
-  "flashingInProgress": "Busy with flashing, please wait. Do not disconnect!"
+  "flashingInProgress": "Busy with flashing\n Do not disconnect!"
 }
