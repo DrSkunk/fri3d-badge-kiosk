@@ -1,15 +1,10 @@
 # Blaster Fri3d 2022
 
-- On the table in front of you lies the blaster flasher.
+- Find the six holes on the side where the blaster points right.
+  ![Step1](/boards/blaster/blaster_1.webp)
 
-![Flasher](/boards/blaster/flasher.webp)
+- Put the **red clamp** on those six holes on making sure the pins make good contact
+  ![Step2](/boards/blaster/blaster_2.webp)
 
-- Locate these six holes on your blaster on the side with the blaster pointing right.
-
-![ICSP Headers](/boards/blaster/icsp.webp)
-
-- The top of the Blaster Flasher is the side where **the gray cable goes up** and **the red edge of the cable is on the right side**.
-- Hold the pins at the end of the Blaster Flasher on the six holes.
-- You are ready to flash. Gently press the pins **and do not release until it is finished**.
-
-![Hold](/boards/blaster/hold.webp)
+- Je bent klaar om te flashen!
+- You are ready to flash. Press **Start flashing**.
