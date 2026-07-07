@@ -16,5 +16,10 @@
   "downloadAllButton": "Download flashers & firmware",
   "downloadBusy": "Bezig met downloaden...",
   "downloadDone": "Alle downloads zijn klaar!",
-  "downloadFailed": "Er ging iets mis bij het downloaden. Bekijk de log hieronder en probeer opnieuw."
+  "downloadFailed": "Er ging iets mis bij het downloaden. Bekijk de log hieronder en probeer opnieuw.",
+  "settingsFlashersTitle": "Flash-programma's",
+  "settingsFirmwareTitle": "Firmware",
+  "downloadItemButton": "Download",
+  "statusMissing": "Niet gedownload",
+  "versionUnknown": "versie onbekend"
 }

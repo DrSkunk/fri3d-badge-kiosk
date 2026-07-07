@@ -1,3 +1,4 @@
+import { AssetsStatus } from "./types/Assets";
 import { Board } from "./types/Board";
 
 const callBacks: {
@@ -48,6 +49,67 @@ function flash() {
     // Simulate a successful flash
     // callCallbacks(callBacks.handleFlashComplete);
   }, 1000);
+}
+
+async function getAssetsStatus(): Promise<AssetsStatus> {
+  const boards = (await (await fetch("/boards/index.json")).json()) as Board[];
+  return {
+    flashers: [
+      {
+        key: "esptool",
+        name: "esptool",
+        fileName: "esptool",
+        installed: true,
+        size: 5_400_000,
+        modifiedAt: "2026-07-01T10:00:00.000Z",
+        version: "v5.0.1",
+        downloadedAt: "2026-07-01T10:00:00.000Z",
+      },
+      {
+        key: "avrdude",
+        name: "avrdude",
+        fileName: "avrdude",
+        installed: true,
+        size: 1_200_000,
+        modifiedAt: "2026-07-01T10:00:00.000Z",
+        version: "v8.1",
+        downloadedAt: "2026-07-01T10:00:00.000Z",
+      },
+      {
+        key: "wchisp",
+        name: "wchisp",
+        fileName: "wchisp",
+        installed: false,
+        size: null,
+        modifiedAt: null,
+        version: null,
+        downloadedAt: null,
+      },
+    ],
+    firmware: boards.map((board, index) => ({
+      key: board.key,
+      name: board.name,
+      fileName: board.firmware,
+      installed: index !== 1,
+      size: index !== 1 ? 2_000_000 + index * 500_000 : null,
+      modifiedAt: index !== 1 ? "2026-07-01T10:00:00.000Z" : null,
+      version: index % 2 === 0 ? "v0.3.1" : null,
+      downloadedAt: index !== 1 ? "2026-07-01T10:00:00.000Z" : null,
+    })),
+  };
+}
+
+function downloadAsset(kind: "flasher" | "firmware", key: string) {
+  console.log("Download asset!", kind, key);
+  const steps = [`Downloading ${kind} ${key}...\n`, `Saved ${key}\n`];
+  steps.forEach((step, index) => {
+    setTimeout(() => {
+      callCallbacks(callBacks.handleDownloadProgress, step);
+    }, 400 * (index + 1));
+  });
+  setTimeout(() => {
+    callCallbacks(callBacks.handleDownloadComplete);
+  }, 400 * (steps.length + 1));
 }
 
 function downloadAssets() {
@@ -132,6 +194,8 @@ export const electronAPI = {
   selectBoard,
   flash,
   downloadAssets,
+  downloadAsset,
+  getAssetsStatus,
   handleFlashComplete,
   handleFlashError,
   handleStdout,

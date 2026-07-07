@@ -1,4 +1,5 @@
 import { Board } from "./types/Board";
+import { AssetsStatus } from "./types/Assets";
 
 declare global {
   interface Window {
@@ -6,6 +7,8 @@ declare global {
       selectBoard: (board: Board) => void;
       flash: () => void;
       downloadAssets: () => void;
+      downloadAsset: (kind: "flasher" | "firmware", key: string) => void;
+      getAssetsStatus: () => Promise<AssetsStatus>;
       handleFlashComplete: (cb: () => void) => () => void;
       handleFlashError: (cb: () => void) => () => void;
       handleStdout: (cb: (event: any, data: string) => void) => () => void;

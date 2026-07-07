@@ -55,6 +55,33 @@ async function createWindow() {
     }
   });
 
+  ipcMain.handle("downloadAsset", async (_, kind, key) => {
+    if (downloading) return;
+    downloading = true;
+    try {
+      if (kind === "flasher") {
+        await downloader.downloadFlasher(key);
+      } else if (kind === "firmware") {
+        await downloader.downloadBoardFirmwareByKey(key);
+      } else {
+        throw new Error(`Unknown download kind "${kind}"`);
+      }
+      // Re-check available flashers/firmware; other assets may still be
+      // missing after a single download, so ignore initialise errors here.
+      await flasher.initialise().catch(() => {});
+      sendMessage("downloadComplete");
+    } catch (error) {
+      sendMessage("downloadProgress", `${error.message}\n`);
+      sendMessage("downloadError");
+    } finally {
+      downloading = false;
+    }
+  });
+
+  ipcMain.handle("getAssetsStatus", async () => {
+    return downloader.getAssetsStatus();
+  });
+
   downloader.events.on("progress", (data) => {
     console.log("download", data);
     sendMessage("downloadProgress", data);

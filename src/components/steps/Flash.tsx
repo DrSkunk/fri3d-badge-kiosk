@@ -70,7 +70,7 @@ export function Flash() {
         </p>
       )}
       {flashing && (
-        <p className="text-8xl text-center animate-text whitespace-pre">
+        <p className="text-8xl text-center font-display font-bold animate-text whitespace-pre">
           <Translate item="flashingInProgress" />
         </p>
       )}
@@ -95,7 +95,7 @@ export function Flash() {
       <textarea
         ref={textAreaRef}
         readOnly
-        className="border w-[70vw] h-[50vh] bg-black px-4 py-2 text-white rounded-sm resize"
+        className="border-2 border-white w-[70vw] h-[50vh] bg-fri3d-darkgrey px-4 py-2 text-white rounded-xl shadow-sticker-sm resize font-mono text-sm"
         value={logs}
       />
     </div>

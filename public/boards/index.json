@@ -2,6 +2,7 @@
   {
     "key": "badge_2022",
     "name": "Badge 2022",
+    "edition": 2022,
     "chipType": "ESP",
     "image": "boards/badge_2022/icon.webp",
     "instructions": {
@@ -18,6 +19,7 @@
   {
     "key": "blaster",
     "name": "Blaster",
+    "edition": 2022,
     "chipType": "AVR",
     "image": "boards/blaster/icon.webp",
     "instructions": {
@@ -33,6 +35,7 @@
   {
     "key": "badge_2024",
     "name": "Badge 2024",
+    "edition": 2024,
     "chipType": "ESP",
     "image": "boards/badge_2024/icon.webp",
     "instructions": {
@@ -48,6 +51,7 @@
   {
     "key": "badge_2026",
     "name": "Badge 2026",
+    "edition": 2026,
     "chipType": "ESP",
     "image": "boards/badge_2026/icon.webp",
     "instructions": {
@@ -63,6 +67,7 @@
   {
     "key": "flamingo",
     "name": "Flamingo",
+    "edition": 2024,
     "chipType": "WCHISP",
     "image": "boards/flamingo/icon.webp",
     "instructions": {
@@ -78,6 +83,7 @@
   {
     "key": "communicator_2024",
     "name": "Communicator 2024",
+    "edition": 2024,
     "chipType": "WCHISP",
     "image": "boards/communicator_2024/icon.webp",
     "instructions": {
@@ -93,6 +99,7 @@
   {
     "key": "communicator_2026",
     "name": "Communicator 2026",
+    "edition": 2026,
     "chipType": "WCHISP",
     "image": "boards/communicator_2026/icon.webp",
     "instructions": {
@@ -103,6 +110,22 @@
     "download": {
       "type": "url",
       "url": "https://github.com/Fri3dCamp/communicator_2026/releases/latest/download/firmware.bin"
+    }
+  },
+  {
+    "key": "dj_2026",
+    "name": "DJ Addon",
+    "edition": 2026,
+    "chipType": "WCHISP",
+    "image": "boards/dj_2026/icon.webp",
+    "instructions": {
+      "en": "boards/dj_2026/instructions.en.md",
+      "nl": "boards/dj_2026/instructions.nl.md"
+    },
+    "firmware": "dj_2026.bin",
+    "download": {
+      "type": "url",
+      "url": "https://github.com/Fri3dCamp/dj_2026/releases/latest/download/firmware.bin"
     }
   }
 ]

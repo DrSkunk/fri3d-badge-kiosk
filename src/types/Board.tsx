@@ -3,6 +3,7 @@ export interface Board {
   key: string;
   image: string;
   chipType: string;
+  edition: number;
   instructions: {
     en: string;
     nl: string;

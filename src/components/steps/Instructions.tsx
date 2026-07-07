@@ -14,11 +14,11 @@ export function Instructions() {
   return (
     <>
       <div>
-        <Markdown className="prose prose-invert prose-img:rounded-xl ">
+        <Markdown className="prose prose-invert prose-img:rounded-xl prose-img:border-2 prose-img:border-white">
           {getCurrentBoard().instructions[currentLanguage]}
         </Markdown>
       </div>
-      <div className="space-x-4 sticky left-0 bottom-0 bg-slate-900 border px-4 py-2 mt-4 rounded-sm">
+      <div className="space-x-4 sticky left-0 bottom-4 bg-white border-2 border-black shadow-sticker px-4 py-3 mt-4 rounded-2xl">
         <Button onClick={previousStep}>
           <Translate item="chooseOtherBoard" />
         </Button>

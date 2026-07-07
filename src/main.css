@@ -1,17 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 @import 'tailwindcss';
 
 @plugin '@tailwindcss/typography';
 
 @theme {
+  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Open Sans', system-ui, sans-serif;
+
+  --color-fri3d-purple: rgb(136 53 201); /* #8835C9 */
+  --color-fri3d-purple-light: rgb(192 133 255); /* #C085FF */
+  --color-fri3d-orange: rgb(255 173 100); /* #FFAD64 */
+  --color-fri3d-mint: rgb(60 232 179); /* #3CE8B3 */
+  --color-fri3d-mint-dark: rgb(47 173 131); /* #2FAD83 */
+  --color-fri3d-red: rgb(255 62 62); /* #FF3E3E */
+  --color-fri3d-darkgrey: rgb(45 45 45); /* #2D2D2D */
+
+  /* "Sticker" look: hard offset shadows. Purple so they pop on the
+     black page background as well as on white panels. */
+  --shadow-sticker: 8px 8px 0 var(--color-fri3d-purple);
+  --shadow-sticker-sm: 4px 4px 0 var(--color-fri3d-purple);
+
   --animate-text: text 1s ease infinite;
 
   @keyframes text {
     0% {
-      color: #f00;
+      color: var(--color-fri3d-red);
     }
     100% {
-      color: #ffffff;
+      color: #fff;
     }
+  }
+}
+
+@layer base {
+  body {
+    background: #000;
+    color: #fff;
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
   }
 }
 

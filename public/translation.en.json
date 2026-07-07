@@ -16,5 +16,10 @@
   "downloadAllButton": "Download flashers & firmware",
   "downloadBusy": "Downloading...",
   "downloadDone": "All downloads finished!",
-  "downloadFailed": "Something went wrong while downloading. Check the log below and try again."
+  "downloadFailed": "Something went wrong while downloading. Check the log below and try again.",
+  "settingsFlashersTitle": "Flash tools",
+  "settingsFirmwareTitle": "Firmware",
+  "downloadItemButton": "Download",
+  "statusMissing": "Not downloaded",
+  "versionUnknown": "unknown version"
 }

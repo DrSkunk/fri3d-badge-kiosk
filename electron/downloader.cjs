@@ -77,6 +77,33 @@ async function downloadFile(url, destination) {
   }
   const buffer = Buffer.from(await response.arrayBuffer());
   await fs.promises.writeFile(destination, buffer);
+  // The final URL after redirects contains the release tag for
+  // "releases/latest/download/..." style links.
+  return response.url || url;
+}
+
+// Version bookkeeping: every download records what was fetched in a
+// versions.json file next to the downloaded assets, so the settings
+// menu can show which version is installed.
+async function readVersions(directory) {
+  try {
+    const data = await fs.promises.readFile(
+      path.resolve(directory, "versions.json"),
+      "utf-8"
+    );
+    return JSON.parse(data);
+  } catch (error) {
+    return {};
+  }
+}
+
+async function recordVersion(directory, key, entry) {
+  const versions = await readVersions(directory);
+  versions[key] = entry;
+  await fs.promises.writeFile(
+    path.resolve(directory, "versions.json"),
+    JSON.stringify(versions, null, 2)
+  );
 }
 
 async function extractArchive(archivePath, destination) {
@@ -123,6 +150,10 @@ async function withTempDir(callback) {
 }
 
 async function downloadFlasher(name) {
+  if (!FLASHER_SOURCES[name]) {
+    throw new Error(`Unknown flasher "${name}"`);
+  }
+  await fs.promises.mkdir(path.resolve("flashers"), { recursive: true });
   const { repo, assetPatterns } = FLASHER_SOURCES[name];
   // Fall back to the x64 build for platforms without a native build
   const pattern = assetPatterns[`${platform}-${arch}`] || assetPatterns[`${platform}-x64`];
@@ -159,13 +190,18 @@ async function downloadFlasher(name) {
     if (platform !== "win32") {
       await fs.promises.chmod(target, 0o755);
     }
+    await recordVersion(path.resolve("flashers"), name, {
+      fileName: binaryName,
+      version: release.tag_name,
+      asset: asset.name,
+      downloadedAt: new Date().toISOString(),
+    });
     progress(`Installed ${binaryName} into "flashers" directory\n`);
     return target;
   });
 }
 
 async function downloadFlashers() {
-  await fs.promises.mkdir(path.resolve("flashers"), { recursive: true });
   for (const name of Object.keys(FLASHER_SOURCES)) {
     await downloadFlasher(name);
   }
@@ -251,26 +287,107 @@ async function downloadAndMergeEspZip(board, destination) {
   });
 }
 
-async function downloadFirmware() {
+// Extract a release tag from a resolved GitHub release download URL,
+// e.g. .../releases/download/v1.2.3/firmware.bin -> v1.2.3
+function versionFromUrl(url) {
+  return url?.match(/\/releases\/download\/([^/]+)\//)?.[1] ?? null;
+}
+
+async function downloadBoardFirmware(board) {
+  const { name, key, firmware, download } = board;
+  if (!download) {
+    progress(`No download source configured for ${name}, skipping\n`);
+    return;
+  }
   await fs.promises.mkdir(path.resolve("firmware"), { recursive: true });
+  progress(`Downloading firmware for ${name}...\n`);
+  const destination = path.resolve("firmware", firmware);
+  let version = null;
+  if (download.type === "url") {
+    const finalUrl = await downloadFile(download.url, destination);
+    version = versionFromUrl(finalUrl);
+  } else if (download.type === "esp-zip") {
+    await downloadAndMergeEspZip(board, destination);
+  } else {
+    throw new Error(`Unknown download type "${download.type}" for ${name}`);
+  }
+  await recordVersion(path.resolve("firmware"), key, {
+    fileName: firmware,
+    version,
+    url: download.url,
+    downloadedAt: new Date().toISOString(),
+  });
+  progress(`Saved ${firmware}\n`);
+}
+
+async function downloadBoardFirmwareByKey(boardKey) {
+  const boards = await loadBoardsManifest();
+  const board = boards.find((board) => board.key === boardKey);
+  if (!board) {
+    throw new Error(`Unknown board "${boardKey}"`);
+  }
+  await downloadBoardFirmware(board);
+}
+
+async function downloadFirmware() {
   const boards = await loadBoardsManifest();
   for (const board of boards) {
-    const { name, firmware, download } = board;
-    if (!download) {
-      progress(`No download source configured for ${name}, skipping\n`);
-      continue;
-    }
-    progress(`Downloading firmware for ${name}...\n`);
-    const destination = path.resolve("firmware", firmware);
-    if (download.type === "url") {
-      await downloadFile(download.url, destination);
-    } else if (download.type === "esp-zip") {
-      await downloadAndMergeEspZip(board, destination);
-    } else {
-      throw new Error(`Unknown download type "${download.type}" for ${name}`);
-    }
-    progress(`Saved ${firmware}\n`);
+    await downloadBoardFirmware(board);
   }
+}
+
+async function statFile(filePath) {
+  try {
+    const stats = await fs.promises.stat(filePath);
+    return { size: stats.size, modifiedAt: stats.mtime.toISOString() };
+  } catch (error) {
+    return null;
+  }
+}
+
+// Overview of installed flashers and firmware files with the version
+// information recorded at download time, for the settings menu.
+async function getAssetsStatus() {
+  const flasherVersions = await readVersions(path.resolve("flashers"));
+  const firmwareVersions = await readVersions(path.resolve("firmware"));
+
+  const flashers = await Promise.all(
+    Object.keys(FLASHER_SOURCES).map(async (name) => {
+      const fileName = platform === "win32" ? `${name}.exe` : name;
+      const stats = await statFile(path.resolve("flashers", fileName));
+      const record = flasherVersions[name];
+      return {
+        key: name,
+        name,
+        fileName,
+        installed: stats !== null,
+        size: stats?.size ?? null,
+        modifiedAt: stats?.modifiedAt ?? null,
+        version: record?.version ?? null,
+        downloadedAt: record?.downloadedAt ?? null,
+      };
+    })
+  );
+
+  const boards = await loadBoardsManifest();
+  const firmware = await Promise.all(
+    boards.map(async (board) => {
+      const stats = await statFile(path.resolve("firmware", board.firmware));
+      const record = firmwareVersions[board.key];
+      return {
+        key: board.key,
+        name: board.name,
+        fileName: board.firmware,
+        installed: stats !== null,
+        size: stats?.size ?? null,
+        modifiedAt: stats?.modifiedAt ?? null,
+        version: record?.version ?? null,
+        downloadedAt: record?.downloadedAt ?? null,
+      };
+    })
+  );
+
+  return { flashers, firmware };
 }
 
 async function downloadAll() {
@@ -283,5 +400,8 @@ async function downloadAll() {
 
 module.exports = {
   downloadAll,
+  downloadFlasher,
+  downloadBoardFirmwareByKey,
+  getAssetsStatus,
   events,
 };
