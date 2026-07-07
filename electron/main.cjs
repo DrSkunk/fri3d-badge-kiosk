@@ -32,6 +32,7 @@ async function createWindow() {
       await flasher.flash();
       sendMessage("flashComplete");
     } catch (error) {
+      sendMessage("stderr", `${error.message}\n`);
       sendMessage("flashError");
     }
   });

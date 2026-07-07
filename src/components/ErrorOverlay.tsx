@@ -12,7 +12,7 @@ export function ErrorOverlay() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    window.electronAPI.handleError((_, error) => {
+    return window.electronAPI.handleError((_, error) => {
       setOpen(true);
       setError(error);
     });

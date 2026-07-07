@@ -1,8 +1,7 @@
 const { app } = require("electron");
 const fs = require("fs");
 const path = require("path");
-const { promisify } = require("util");
-const { exec, spawn } = require("child_process");
+const { spawn } = require("child_process");
 const { platform } = require("process");
 const commandExists = require("command-exists");
 const EventEmitter = require("node:events");
@@ -19,13 +18,15 @@ async function spawnEmitter(command, options, stdout, stderr) {
     child.stderr.on("data", (data) => {
       stderr.emit("data", data.toString());
     });
+    child.on("error", (error) => {
+      stderr.emit("data", `${error.message}\n`);
+      reject(error);
+    });
     child.on("close", (code) => {
       resolve(code);
     });
   });
 }
-
-const execPromise = promisify(exec);
 
 // Keep in sync with the boards/index.json file
 const ChipType = {
@@ -103,7 +104,7 @@ async function initialise() {
     if (platform === "win32") {
       executablePath += ".exe";
       // not on windows, then esptool probably is "esptool.py"
-    } else if (name === ChipType.ESPTOOL) {
+    } else if (name === ChipType.ESP) {
       executablePath += ".py";
     }
     console.log("Checking", executablePath);
@@ -155,13 +156,20 @@ async function initialise() {
 }
 
 async function flash() {
+  if (!selectedBoard) {
+    throw new Error("No board selected");
+  }
   const { chipType, firmware } = selectedBoard;
+  if (!flashers[chipType]) {
+    throw new Error(`Unknown chip type "${chipType}"`);
+  }
   const firmwarePath = path.resolve("firmware", firmware);
+  if (!fs.existsSync(firmwarePath)) {
+    throw new Error(`Firmware file not found: ${firmwarePath}`);
+  }
   const flashOptions = flashers[chipType].flashOptions.map((option) => {
     return option.replace("{{FIRMWARE}}", firmwarePath);
   });
-
-  // check if file exists
 
   const exitCode = await spawnEmitter(
     flashers[chipType].executable,

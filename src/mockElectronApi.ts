@@ -19,8 +19,11 @@ function callCallbacks(
   ...args: any[]
 ) {
   for (const cb of callbacks) {
-    if (args.length === 0) return cb();
-    return cb(false, ...args);
+    if (args.length === 0) {
+      cb();
+    } else {
+      cb(false, ...args);
+    }
   }
 }
 

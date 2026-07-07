@@ -28,16 +28,17 @@ export function BoardContextProvider({
       const response = await fetch("/boards/index.json");
       const boards = (await response.json()) as Board[];
       // get instructions
-      for (const board of boards) {
-        for (const element of Object.entries(board.instructions)) {
-          const [lang, url] = element;
-          if (lang !== "en" && lang !== "nl") {
-            throw new Error(`Unsupported language ${lang}`);
-          }
-          const response = await fetch(url);
-          board.instructions[lang] = await response.text();
-        }
-      }
+      await Promise.all(
+        boards.flatMap((board) =>
+          Object.entries(board.instructions).map(async ([lang, url]) => {
+            if (lang !== "en" && lang !== "nl") {
+              throw new Error(`Unsupported language ${lang}`);
+            }
+            const response = await fetch(url);
+            board.instructions[lang] = await response.text();
+          })
+        )
+      );
       setBoards(boards);
     }
     getData();

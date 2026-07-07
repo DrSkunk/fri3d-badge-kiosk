@@ -3,8 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("electronAPI", {
   // from frontend to electron
   selectBoard: (board) => ipcRenderer.invoke("selectBoard", board),
-  flash: (chipType, port, file) =>
-    ipcRenderer.invoke("flash", chipType, port, file),
+  flash: () => ipcRenderer.invoke("flash"),
 
   // from electron to frontend
   handleFlashComplete: (callback) => {

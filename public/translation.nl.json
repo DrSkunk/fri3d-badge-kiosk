@@ -1,7 +1,8 @@
 {
   "closeErrorDialog": "Sluiten",
   "doneButton": "Terug naar het begin",
-  "doneExplanation": "Je bordje zou moeten hersteld zijn. Is dit nog niet het geval kan je het  nog eens proberen of iemand van de vrijwilligers aanspreken voor hulp.",
+  "doneTitle": "Klaar!",
+  "doneExplanation": "Je bordje zou moeten hersteld zijn. Is dit nog niet het geval kan je het nog eens proberen of iemand van de vrijwilligers aanspreken voor hulp.",
   "chooseBoardTitle": "Raak aan wat je wil fixen",
   "flashingFailedButton": "Het flashen lijkt gefaald. Wil je opnieuw proberen? Kijk zeker goed de instructies na!",
   "flashingTryAgainButton": "Opnieuw proberen",
