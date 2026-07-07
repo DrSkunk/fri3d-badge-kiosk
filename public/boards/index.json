@@ -9,7 +9,7 @@
       "en": "boards/badge_2022/instructions.en.md",
       "nl": "boards/badge_2022/instructions.nl.md"
     },
-    "firmware": "badge_2022.img",
+    "firmware": "badge_2022.bin",
     "download": {
       "type": "esp-zip",
       "url": "https://raw.githubusercontent.com/Fri3dCamp/badge-2020/master/firmware/micropython-latest.zip",
@@ -42,7 +42,7 @@
       "en": "boards/badge_2024/instructions.en.md",
       "nl": "boards/badge_2024/instructions.nl.md"
     },
-    "firmware": "badge_2024.img",
+    "firmware": "badge_2024.bin",
     "download": {
       "type": "url",
       "url": "https://github.com/Fri3dCamp/badge_firmware_MicroPythonOS/releases/latest/download/full_2026_firmware_for_2024_badge.bin"

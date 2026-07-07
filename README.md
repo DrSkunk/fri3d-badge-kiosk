@@ -39,14 +39,14 @@ Follow the [Boards manifest](./public/boards/index.json) to see which firmwares 
 Currently this is:
 
 - `badge_2026.bin`
-- `badge_2024.img`
-- `badge_2022.img`
+- `badge_2024.bin`
+- `badge_2022.bin`
 - `blaster.hex`
 - `flamingo.hex`
 - `communicator_2026.bin`
 - `communicator_2024.bin`
 
-Note: `badge_2022.img` must be a single image flashable at offset `0x0`. The automatic download builds it by merging the bootloader, partition table and application from the [badge-2020 firmware zip](https://github.com/Fri3dCamp/badge-2020/blob/master/firmware/micropython-latest.zip) with `esptool merge_bin`.
+Note: `badge_2022.bin` must be a single image flashable at offset `0x0`. The automatic download builds it by merging the bootloader, partition table and application from the [badge-2020 firmware zip](https://github.com/Fri3dCamp/badge-2020/blob/master/firmware/micropython-latest.zip) with `esptool merge_bin`.
 
 ## Adding a new board
 
