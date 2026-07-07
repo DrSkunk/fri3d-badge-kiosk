@@ -10,6 +10,7 @@ const callBacks: {
   handleDownloadProgress: ((event: any, data: string) => void)[];
   handleDownloadComplete: (() => void)[];
   handleDownloadError: (() => void)[];
+  handleOpenSettings: (() => void)[];
 } = {
   handleFlashComplete: [],
   handleFlashError: [],
@@ -19,6 +20,7 @@ const callBacks: {
   handleDownloadProgress: [],
   handleDownloadComplete: [],
   handleDownloadError: [],
+  handleOpenSettings: [],
 };
 
 function callCallbacks(
@@ -206,4 +208,5 @@ export const electronAPI = {
   ),
   handleDownloadComplete: makeHandler<() => void>("handleDownloadComplete"),
   handleDownloadError: makeHandler<() => void>("handleDownloadError"),
+  handleOpenSettings: makeHandler<() => void>("handleOpenSettings"),
 };

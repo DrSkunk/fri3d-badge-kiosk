@@ -41,4 +41,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("downloadError", callback);
     return () => ipcRenderer.off("downloadError", callback);
   },
+  handleOpenSettings: (callback) => {
+    ipcRenderer.on("openSettings", callback);
+    return () => ipcRenderer.off("openSettings", callback);
+  },
 });

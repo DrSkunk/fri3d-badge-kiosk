@@ -1,11 +1,94 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("node:path");
 const serve = require("electron-serve");
 const flasher = require("./flasher.cjs");
 const downloader = require("./downloader.cjs");
 
 const loadURL = serve({ directory: "../build-gui" });
+
+function buildMenuTemplate(mainWindow) {
+  const template = [
+    ...(process.platform === "darwin"
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              {
+                label: "Settings...",
+                accelerator: "CmdOrCtrl+,",
+                click: () => mainWindow.webContents.send("openSettings"),
+              },
+              { type: "separator" },
+              { role: "services" },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideOthers" },
+              { role: "unhide" },
+              { type: "separator" },
+              { role: "quit" },
+            ],
+          },
+        ]
+      : [
+          {
+            label: "File",
+            submenu: [
+              {
+                label: "Settings...",
+                accelerator: "CmdOrCtrl+,",
+                click: () => mainWindow.webContents.send("openSettings"),
+              },
+              { type: "separator" },
+              { role: "quit" },
+            ],
+          },
+        ]),
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        ...(process.platform === "darwin"
+          ? [
+              { role: "pasteAndMatchStyle" },
+              { role: "delete" },
+              { role: "selectAll" },
+              { type: "separator" },
+              {
+                label: "Speech",
+                submenu: [{ role: "startSpeaking" }, { role: "stopSpeaking" }],
+              },
+            ]
+          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+      ],
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+        { type: "separator" },
+        { role: "resetZoom" },
+        { role: "zoomIn" },
+        { role: "zoomOut" },
+        { type: "separator" },
+        { role: "togglefullscreen" },
+      ],
+    },
+    {
+      role: "window",
+      submenu: [{ role: "minimize" }, { role: "close" }],
+    },
+  ];
+
+  return Menu.buildFromTemplate(template);
+}
 
 async function createWindow() {
   // Create the browser window.
@@ -18,6 +101,8 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  Menu.setApplicationMenu(buildMenuTemplate(mainWindow));
 
   function sendMessage(channel, ...args) {
     if (mainWindow.isDestroyed()) return;

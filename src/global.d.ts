@@ -19,6 +19,7 @@ declare global {
       ) => () => void;
       handleDownloadComplete: (cb: () => void) => () => void;
       handleDownloadError: (cb: () => void) => () => void;
+      handleOpenSettings: (cb: () => void) => () => void;
     };
   }
 }
