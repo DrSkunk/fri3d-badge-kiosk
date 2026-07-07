@@ -1,17 +1,43 @@
 name: Build/release
 
-on: push
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
 
 jobs:
-  release:
-    runs-on: macos-latest
+  build:
+    if: github.ref_type == 'branch'
+    runs-on: macos-15
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build GUI
+        run: npm run build:gui
+
+  release:
+    if: github.ref_type == 'tag'
+    runs-on: macos-15
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
         with:
           node-version: 22.x
           cache: npm
