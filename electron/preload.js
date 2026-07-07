@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // from frontend to electron
   selectBoard: (board) => ipcRenderer.invoke("selectBoard", board),
   flash: () => ipcRenderer.invoke("flash"),
+  downloadAssets: () => ipcRenderer.invoke("downloadAssets"),
 
   // from electron to frontend
   handleFlashComplete: (callback) => {
@@ -25,5 +26,17 @@ contextBridge.exposeInMainWorld("electronAPI", {
   handleError: (callback) => {
     ipcRenderer.on("error", callback);
     return () => ipcRenderer.off("error", callback);
+  },
+  handleDownloadProgress: (callback) => {
+    ipcRenderer.on("downloadProgress", callback);
+    return () => ipcRenderer.off("downloadProgress", callback);
+  },
+  handleDownloadComplete: (callback) => {
+    ipcRenderer.on("downloadComplete", callback);
+    return () => ipcRenderer.off("downloadComplete", callback);
+  },
+  handleDownloadError: (callback) => {
+    ipcRenderer.on("downloadError", callback);
+    return () => ipcRenderer.off("downloadError", callback);
   },
 });

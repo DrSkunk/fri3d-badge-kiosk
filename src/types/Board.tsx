@@ -8,4 +8,9 @@ export interface Board {
     nl: string;
   };
   firmware: string;
+  download?: {
+    type: "url" | "esp-zip";
+    url: string;
+    chip?: string;
+  };
 }

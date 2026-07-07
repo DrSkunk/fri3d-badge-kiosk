@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
 const serve = require("electron-serve");
 const flasher = require("./flasher.cjs");
+const downloader = require("./downloader.cjs");
 
 const loadURL = serve({ directory: "../build-gui" });
 
@@ -35,6 +36,28 @@ async function createWindow() {
       sendMessage("stderr", `${error.message}\n`);
       sendMessage("flashError");
     }
+  });
+
+  let downloading = false;
+  ipcMain.handle("downloadAssets", async () => {
+    if (downloading) return;
+    downloading = true;
+    try {
+      await downloader.downloadAll();
+      // Re-check flashers and firmware now that they are downloaded
+      await flasher.initialise();
+      sendMessage("downloadComplete");
+    } catch (error) {
+      sendMessage("downloadProgress", `${error.message}\n`);
+      sendMessage("downloadError");
+    } finally {
+      downloading = false;
+    }
+  });
+
+  downloader.events.on("progress", (data) => {
+    console.log("download", data);
+    sendMessage("downloadProgress", data);
   });
 
   flasher.stdout.on("data", (data) => {

@@ -7,6 +7,7 @@ import { Instructions } from "./components/steps/Instructions";
 import { Flash } from "./components/steps/Flash";
 import { Done } from "./components/steps/Done";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { SettingsMenu } from "./components/SettingsMenu";
 
 export function App() {
   const { currentStep } = useContext(StepContext);
@@ -15,6 +16,7 @@ export function App() {
     <>
       <ErrorOverlay />
       <LanguageSwitcher />
+      <SettingsMenu />
       <div className="flex flex-col justify-center items-center container mx-auto py-4">
         {currentStep === Step.CHOOSE_BOARD && <ChooseBoard />}
         {currentStep === Step.INSTRUCTIONS && <Instructions />}

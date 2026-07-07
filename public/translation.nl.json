@@ -10,5 +10,11 @@
   "chooseOtherBoard": "Kies een ander bord",
   "flash": "Start met flashen",
   "changeToLanguage": "Change to English",
-  "flashingInProgress": "Bezig met flashen\nNiet uittrekken!"
+  "flashingInProgress": "Bezig met flashen\nNiet uittrekken!",
+  "settingsTitle": "Instellingen",
+  "settingsExplanation": "Download de flash-programma's (esptool, avrdude, wchisp) en de nieuwste firmware voor alle borden. Een internetverbinding is vereist.",
+  "downloadAllButton": "Download flashers & firmware",
+  "downloadBusy": "Bezig met downloaden...",
+  "downloadDone": "Alle downloads zijn klaar!",
+  "downloadFailed": "Er ging iets mis bij het downloaden. Bekijk de log hieronder en probeer opnieuw."
 }

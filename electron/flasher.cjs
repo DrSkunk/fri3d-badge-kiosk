@@ -87,6 +87,12 @@ async function loadJsonFile(filePath) {
   return JSON.parse(data);
 }
 
+async function loadBoardsManifest() {
+  return app.isPackaged
+    ? loadJsonFile("./resources/build-gui/boards/index.json")
+    : loadJsonFile("./public/boards/index.json");
+}
+
 async function initialise() {
   try {
     fs.mkdirSync(path.resolve("firmware"), { recursive: true });
@@ -96,28 +102,39 @@ async function initialise() {
   }
 
   let missingFlashers = [];
-  for (const flasher of Object.entries(flashers)) {
-    const [name, { executable }] = flasher;
+  for (const [name, { executable }] of Object.entries(flashers)) {
+    const candidates = [executable];
+    if (platform === "win32") {
+      candidates.push(`${executable}.exe`);
+      // not on windows, then esptool can also be "esptool.py"
+    } else if (name === ChipType.ESP) {
+      candidates.push(`${executable}.py`);
+    }
 
     // First check if the executable is available in the flashers directory
-    let executablePath = path.resolve("flashers", executable);
-    if (platform === "win32") {
-      executablePath += ".exe";
-      // not on windows, then esptool probably is "esptool.py"
-    } else if (name === ChipType.ESP) {
-      executablePath += ".py";
-    }
-    console.log("Checking", executablePath);
-    if (fs.existsSync(executablePath)) {
-      flashers[name].executable = executablePath;
+    const bundled = candidates
+      .map((candidate) => path.resolve("flashers", candidate))
+      .find((candidatePath) => fs.existsSync(candidatePath));
+    if (bundled) {
+      flashers[name].command = bundled;
       continue;
     }
+
     // Otherwise check if it's available in the PATH
-    try {
-      await commandExists(executable);
-      flashers[name].executable = executable;
-      continue;
-    } catch (error) {
+    let foundInPath = null;
+    for (const candidate of candidates) {
+      try {
+        await commandExists(candidate);
+        foundInPath = candidate;
+        break;
+      } catch (error) {
+        // keep looking
+      }
+    }
+    if (foundInPath) {
+      flashers[name].command = foundInPath;
+    } else {
+      flashers[name].command = null;
       missingFlashers.push(name);
     }
   }
@@ -132,10 +149,7 @@ async function initialise() {
 
   // check if all firmware files are available
   const firmwareDir = path.resolve("firmware");
-  // const boardsManifest = await (await fetch("/boards/index.json")).json();
-  const boardsManifest = app.isPackaged
-    ? await loadJsonFile("./resources/build-gui/boards/index.json")
-    : await loadJsonFile("./public/boards/index.json");
+  const boardsManifest = await loadBoardsManifest();
 
   let missingFirmware = [];
   for (const board of boardsManifest) {
@@ -163,6 +177,11 @@ async function flash() {
   if (!flashers[chipType]) {
     throw new Error(`Unknown chip type "${chipType}"`);
   }
+  if (!flashers[chipType].command) {
+    throw new Error(
+      `The ${flashers[chipType].executable} flasher is not available. Download it via the settings menu or add it to the "flashers" directory.`
+    );
+  }
   const firmwarePath = path.resolve("firmware", firmware);
   if (!fs.existsSync(firmwarePath)) {
     throw new Error(`Firmware file not found: ${firmwarePath}`);
@@ -172,7 +191,7 @@ async function flash() {
   });
 
   const exitCode = await spawnEmitter(
-    flashers[chipType].executable,
+    flashers[chipType].command,
     flashOptions,
     stdoutEvents,
     stderrEvents
@@ -187,6 +206,7 @@ module.exports = {
   initialise,
   flash,
   selectBoard,
+  loadBoardsManifest,
   stdout: stdoutEvents,
   stderr: stderrEvents,
 };

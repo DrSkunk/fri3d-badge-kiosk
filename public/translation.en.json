@@ -10,5 +10,11 @@
   "chooseOtherBoard": "Choose another board",
   "flash": "Start flashing",
   "changeToLanguage": "Verander naar het Nederlands",
-  "flashingInProgress": "Busy with flashing\n Do not disconnect!"
+  "flashingInProgress": "Busy with flashing\n Do not disconnect!",
+  "settingsTitle": "Settings",
+  "settingsExplanation": "Download the flashing tools (esptool, avrdude, wchisp) and the latest firmware for all boards. An internet connection is required.",
+  "downloadAllButton": "Download flashers & firmware",
+  "downloadBusy": "Downloading...",
+  "downloadDone": "All downloads finished!",
+  "downloadFailed": "Something went wrong while downloading. Check the log below and try again."
 }

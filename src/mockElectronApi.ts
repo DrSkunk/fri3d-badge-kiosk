@@ -6,12 +6,18 @@ const callBacks: {
   handleStdout: ((event: any, data: string) => void)[];
   handleStderr: ((event: any, data: string) => void)[];
   handleError: ((event: any, data: string) => void)[];
+  handleDownloadProgress: ((event: any, data: string) => void)[];
+  handleDownloadComplete: (() => void)[];
+  handleDownloadError: (() => void)[];
 } = {
   handleFlashComplete: [],
   handleFlashError: [],
   handleStdout: [],
   handleStderr: [],
   handleError: [],
+  handleDownloadProgress: [],
+  handleDownloadComplete: [],
+  handleDownloadError: [],
 };
 
 function callCallbacks(
@@ -42,6 +48,39 @@ function flash() {
     // Simulate a successful flash
     // callCallbacks(callBacks.handleFlashComplete);
   }, 1000);
+}
+
+function downloadAssets() {
+  console.log("Download assets!");
+  const steps = [
+    "Downloading flashers...\n",
+    "Downloading esptool...\n",
+    "Downloading avrdude...\n",
+    "Downloading wchisp...\n",
+    "Downloading firmware...\n",
+    "All downloads finished!\n",
+  ];
+  steps.forEach((step, index) => {
+    setTimeout(() => {
+      callCallbacks(callBacks.handleDownloadProgress, step);
+    }, 400 * (index + 1));
+  });
+  setTimeout(() => {
+    callCallbacks(callBacks.handleDownloadComplete);
+  }, 400 * (steps.length + 1));
+}
+
+function makeHandler<T extends (...args: any[]) => void>(
+  key: keyof typeof callBacks
+) {
+  return (cb: T): (() => void) => {
+    (callBacks[key] as T[]).push(cb);
+    return () => {
+      (callBacks[key] as T[]) = (callBacks[key] as T[]).filter(
+        (callback) => callback !== cb
+      );
+    };
+  };
 }
 
 function handleFlashComplete(cb: () => void): () => void {
@@ -92,9 +131,15 @@ function handleError(cb: (event: any, data: string) => void): () => void {
 export const electronAPI = {
   selectBoard,
   flash,
+  downloadAssets,
   handleFlashComplete,
   handleFlashError,
   handleStdout,
   handleStderr,
   handleError,
+  handleDownloadProgress: makeHandler<(event: any, data: string) => void>(
+    "handleDownloadProgress"
+  ),
+  handleDownloadComplete: makeHandler<() => void>("handleDownloadComplete"),
+  handleDownloadError: makeHandler<() => void>("handleDownloadError"),
 };
