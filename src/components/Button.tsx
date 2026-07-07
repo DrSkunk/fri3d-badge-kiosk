@@ -11,7 +11,7 @@ export function Button({
 }) {
   return (
     <HUButton
-      className={`border-2 border-black px-6 py-4 rounded-xl text-black text-2xl font-display font-bold bg-fri3d-mint shadow-sticker-sm transition hover:bg-fri3d-mint-dark active:translate-x-1 active:translate-y-1 active:shadow-none ${className} disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none`}
+      className={`border-2 border-black px-6 py-4 rounded-xl text-black text-2xl font-display font-bold bg-fri3d-mint shadow-sticker-sm transition active:translate-x-1 active:translate-y-1 active:shadow-none ${className} disabled:bg-fri3d-darkgrey disabled:text-white disabled:shadow-none`}
       {...props}
     >
       {children}

@@ -7,10 +7,10 @@ import { Translate } from "../Translate";
 const CURRENT_EDITION = 2026;
 
 const EDITION_COLORS = [
-  "bg-fri3d-mint",
-  "bg-fri3d-orange",
-  "bg-fri3d-purple-light",
-  "bg-fri3d-red",
+  "bg-fri3d-mint text-black",
+  "bg-fri3d-orange text-black",
+  "bg-fri3d-purple text-white",
+  "bg-fri3d-red text-black",
 ];
 
 function BoardCard({
@@ -31,7 +31,7 @@ function BoardCard({
       <img
         src={board.image}
         alt={board.name}
-        className="bg-gray-100 border-t-2 border-black aspect-square object-cover w-full"
+        className="bg-white border-t-2 border-black aspect-square object-cover w-full"
       />
     </div>
   );
@@ -84,9 +84,9 @@ export function ChooseBoard() {
           return (
             <div key={edition}>
               <button
-                className={`flex items-center gap-4 w-full border-2 border-black rounded-xl px-6 py-3 text-3xl font-display font-bold text-black shadow-sticker-sm transition active:translate-x-1 active:translate-y-1 active:shadow-none ${
+                className={`flex items-center gap-4 w-full border-2 border-black rounded-xl px-6 py-3 text-3xl font-display font-bold shadow-sticker-sm transition active:translate-x-1 active:translate-y-1 active:shadow-none ${
                   EDITION_COLORS[index % EDITION_COLORS.length]
-                } ${open ? "" : "opacity-80 hover:opacity-100"}`}
+                }`}
                 onClick={() => setOpenEdition(edition)}
               >
                 <span>{edition}</span>

@@ -7,7 +7,7 @@ export function Done() {
   const { nextStep } = useContext(StepContext);
   return (
     <div className="h-screen gap-4 flex justify-center flex-col items-center">
-      <h1 className="text-3xl font-bold">
+      <h1 className="text-3xl font-bold text-fri3d-mint">
         <Translate item="doneTitle" />
       </h1>
       <p className="text-lg">

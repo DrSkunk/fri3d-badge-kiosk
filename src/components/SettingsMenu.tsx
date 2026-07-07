@@ -42,10 +42,10 @@ function AssetRow({
         <div className="text-sm font-mono truncate">
           {asset.fileName}
           {asset.installed && asset.size !== null && (
-            <span className="text-gray-500"> · {formatSize(asset.size)}</span>
+            <span className="text-fri3d-darkgrey"> · {formatSize(asset.size)}</span>
           )}
           {asset.installed && (asset.downloadedAt || asset.modifiedAt) && (
-            <span className="text-gray-500">
+            <span className="text-fri3d-darkgrey">
               {" "}
               · {formatDate(asset.downloadedAt ?? asset.modifiedAt)}
             </span>
@@ -230,7 +230,7 @@ export function SettingsMenu() {
                 )}
               </Button>
               <Button
-                className="bg-white! hover:bg-gray-100!"
+                className="bg-white!"
                 onClick={() => setOpen(false)}
                 disabled={downloading}
               >
