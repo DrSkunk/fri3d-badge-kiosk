@@ -18,7 +18,7 @@ export function Instructions() {
           {getCurrentBoard().instructions[currentLanguage]}
         </Markdown>
       </div>
-      <div className="space-x-4 sticky left-0 bottom-0 bg-slate-900 border px-4 py-2 mt-4 rounded">
+      <div className="space-x-4 sticky left-0 bottom-0 bg-slate-900 border px-4 py-2 mt-4 rounded-sm">
         <Button onClick={previousStep}>
           <Translate item="chooseOtherBoard" />
         </Button>

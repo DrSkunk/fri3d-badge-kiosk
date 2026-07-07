@@ -76,7 +76,7 @@ export function Flash() {
       )}
       <div className="flex gap-4">
         {showFlashAgain && (
-          <Button className="mx-auto block flex-shrink" onClick={startFlash}>
+          <Button className="mx-auto block shrink" onClick={startFlash}>
             <Translate item="flashingTryAgainButton" />
           </Button>
         )}
@@ -95,7 +95,7 @@ export function Flash() {
       <textarea
         ref={textAreaRef}
         readOnly
-        className="border w-[70vw] h-[50vh] bg-black px-4 py-2 text-white rounded resize"
+        className="border w-[70vw] h-[50vh] bg-black px-4 py-2 text-white rounded-sm resize"
         value={logs}
       />
     </div>
